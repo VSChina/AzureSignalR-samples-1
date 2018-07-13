@@ -19,7 +19,7 @@ Here is a diagram that illustrates the structure of this appliaction:
 
 ## Deploy to Azure
 
-### Deploy Static Files
+### Deploy Static Files (Or just use Azure Storage Explorer to upload with ease)
 
 1. Create storage account
 
@@ -47,60 +47,31 @@ Here is a diagram that illustrates the structure of this appliaction:
    az storage blob upload -c content --account-name <account_name> -n scripts/qrcode.min.js -f scripts/qrcode.min.js
    az storage blob upload -c content --account-name <account_name> -n images/signalr-logo.png -f images/signalr-logo.png
    ```
+### Generate JWT Bearear Token
 
+1. Open the `JwtBearerToken` folder in VS
+
+2. In Program.cs, replace the value of endpoint and key of signalr service
+
+3. Run the solution to get `AzureSignalRServerToken` and `AzureSignalRClientToken`
 
 ### Deploy Azure Function
 
-1. Create a SignalR Service in Azure portal.
+1. Install Azure Functions VS Code Extension
 
-2. Create Azure function
-
-   ```
-   az group create --name <resource_group_name> --location CentralUS
-   az storage account create --resource-group <resource_group_name> --name <storage_account_name> \
-      --location CentralUS --sku Standard_LRS
-   az functionapp create --resource-group <resource_group_name> --name <function_name> \
-      --consumption-plan-location CentralUS --storage-account <storage_account_name>
-   ```
-
-   **> Note:** Please provide a unique name for ```function_name```
-
-3. Navigate to the ```/function``` folder and configure the deployment credentials
-
-   ```
-   az functionapp deployment source config-local-git --resource-group <resource_group_name> --name <function_name>
-   az functionapp deployment user set --user-name <user_name> --password <password>
-   ```
-
-   **> Note: **Please take note of the Git url returned as you will need it later on.
-
-4. Build and deploy Azure function
-
-   ```
-   nuget restore
-   msbuild /p:Configuration=Release
-
-   cd bin/Release/net461
-   git init
-   git remote add origin <deploy_git_url>
-   git add -A
-   git commit -m "init commit"
-   git push origin master
-   ```
+2. Right-click on the `function-java` folder to deploy 
 
 5. Update application settings
 
-   ```
-   az functionapp config appsettings set --resource-group <resource_group_name> --name <app_name> \
-      --setting TableConnectionString=<table_connection_string>
-   az functionapp config appsettings set --resource-group <resource_group_name> --name <app_name> \
-      --setting BlobHost=<blob_host>
-   az functionapp config appsettings set --resource-group <resource_group_name> --name <app_name> \
-      --setting AzureSignalRConnectionString=<signalr_connection_string>
+![Settings](settings.png)
 
-   ```
+Note: 
+* ```TableConnectionString``` can be located in the Azure Portal from the Access Key section of the created storage account.
+* ```BlobHost``` is the blob service endpoint hostname (without https://), which you can find in the Blob Service Containers section: e.g. *****.blob.core.windows.net/folder_name
+* ```AzureSignalREndpoint```: get from Azure portal.
+* ```AzureSignalRServerToken```: get from `JwtBearerToken` solution.
+* ```AzureSignalRClientToken```: get from `JwtBearerToken` solution.
 
-**> Note: ** ```table_connection_string``` can be located in the Azure Portal from the Access Key section of the created storage account. ```blob_host``` is the blob service endpoint hostname (without https://), which you can find in the Blob Service Containers section. ```signalr_connection_string``` refers to the connection string you used before in the Chatroom sample.
 
 ## Run the application
 
