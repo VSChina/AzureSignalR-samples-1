@@ -21,7 +21,7 @@ public class Function {
      * {your host}/api/hello?name=HTTP%20Query
      */
     @FunctionName("signin")
-    public HttpResponseMessage<String> hello(
+    public HttpResponseMessage<String> signin(
             @HttpTrigger(name = "req", methods = { "get",
                     "post" }, authLevel = AuthorizationLevel.ANONYMOUS) HttpRequestMessage<Optional<String>> request,
             final ExecutionContext context) {
@@ -31,10 +31,8 @@ public class Function {
             String serverToken = System.getenv("AzureSignalRServerToken");
             String clientToken = System.getenv("AzureSignalRClientToken");
 
-            UserAgentAnalyzer uaa = UserAgentAnalyzer.newBuilder().hideMatcherLoadStats().withCache(25000).build();
-            UserAgent agent = uaa.parse(request.getHeaders().get("user-agent"));
             // add sign-in record
-            table.Add(agent.getValue("OperatingSystemName"), agent.getValue("AgentName"));
+            table.Add(request.getQueryParameters().get("os"), request.getQueryParameters().get("broswer"));
 
             // calculate statistics
             SignInStats stats = table.GetStats();

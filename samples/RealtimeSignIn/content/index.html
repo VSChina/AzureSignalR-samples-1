@@ -87,6 +87,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.3.0"></script>
   <script src="scripts/signalr.min.js"></script>
   <script src="scripts/qrcode.min.js"></script>
+  <script src="scripts/ua-parser.min.js"></script>
   <script>
     var chartByOS, chartByBrowser;
 
@@ -212,7 +213,12 @@
       connection.start().catch(() => updateStatus('Disconnected'));
     }
 
-    $.getJSON('/signin').done(result => {
+    let parser = new UAParser(window.navigator.userAgent);
+    let result = parser.getResult();
+    let browserName = result.browser.name ? result.browser.name : 'Unknown';
+    let osName = result.os.name ? result.os.name : 'Unknown';
+
+    $.getJSON(`/signin?os=${osName}&broswer=${browserName}`).done(result => {
       initPage(result.stats);
       startConnection(result.authInfo.serviceUrl, result.authInfo.accessToken);
     });
