@@ -218,7 +218,7 @@
     let browserName = result.browser.name ? result.browser.name : 'Unknown';
     let osName = result.os.name ? result.os.name : 'Unknown';
 
-    $.getJSON(`/signin?os=${osName}&broswer=${browserName}`).done(result => {
+    $.getJSON(`/signin?os=${osName}&browser=${browserName}`).done(result => {
       initPage(result.stats);
       startConnection(result.authInfo.serviceUrl, result.authInfo.accessToken);
     });

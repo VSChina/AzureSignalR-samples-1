@@ -32,7 +32,7 @@ public class Function {
             String clientToken = System.getenv("AzureSignalRClientToken");
 
             // add sign-in record
-            table.Add(request.getQueryParameters().get("os"), request.getQueryParameters().get("broswer"));
+            table.Add(request.getQueryParameters().get("os"), request.getQueryParameters().get("browser"));
 
             // calculate statistics
             SignInStats stats = table.GetStats();
